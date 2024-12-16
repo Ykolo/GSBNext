@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -11,4 +5,69 @@ generator client {
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+}
+
+model famille {
+  id         String       @id @db.VarChar(10)
+  libelle    String       @db.VarChar(80)
+  medicament medicament[]
+}
+
+model medecin {
+  id                       Int       @id @default(autoincrement())
+  nom                      String    @db.VarChar(30)
+  prenom                   String    @db.VarChar(30)
+  adresse                  String    @db.VarChar(80)
+  tel                      String?   @db.VarChar(15)
+  specialitecomplementaire String?   @db.VarChar(50)
+  departement              Int
+  rapport                  rapport[]
+}
+
+model medicament {
+  id                String   @id @db.VarChar(30)
+  nomcommercial     String   @db.VarChar(80)
+  idfamille         String   @db.VarChar(10)
+  composition       String   @db.VarChar(255)
+  effets            String   @db.VarChar(255)
+  contreindications String   @db.VarChar(255)
+  famille           famille  @relation(fields: [idfamille], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "medicament_fk")
+  offrir            offrir[]
+}
+
+model offrir {
+  idrapport    Int
+  idmedicament String     @db.VarChar(30)
+  quantite     Int?       @db.SmallInt
+  rapport      rapport    @relation(fields: [idrapport], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "offrir_fk1")
+  medicament   medicament @relation(fields: [idmedicament], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "offrir_fk2")
+
+  @@id([idrapport, idmedicament])
+}
+
+model rapport {
+  id         Int       @id @default(autoincrement())
+  date       DateTime? @db.Date
+  motif      String?   @db.VarChar(100)
+  bilan      String?   @db.VarChar(100)
+  idvisiteur String    @db.Char(4)
+  idmedecin  Int
+  offrir     offrir[]
+  medecin    medecin   @relation(fields: [idmedecin], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_rapport_medecin")
+  visiteur   visiteur  @relation(fields: [idvisiteur], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_rapport_visiteur")
+}
+
+model visiteur {
+  id           String    @id @db.Char(4)
+  nom          String?   @db.Char(30)
+  prenom       String?   @db.Char(30)
+  login        String?   @db.Char(20)
+  mdp          String?   @db.Char(20)
+  adresse      String?   @db.Char(30)
+  cp           String?   @db.Char(5)
+  ville        String?   @db.Char(30)
+  dateembauche DateTime? @db.Date
+  timespan     BigInt
+  ticket       String?   @db.VarChar(50)
+  rapport      rapport[]
 }

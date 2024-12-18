@@ -1,7 +1,6 @@
 'use server';
 
 import { PrismaClient } from '@prisma/client';
-import { NextResponse } from 'next/server';
 
 const prisma = new PrismaClient();
 
@@ -16,6 +15,6 @@ export const getVisiteur = async (login: string, mdp: string) =>{
     return response;
   }catch(e){
     console.error('Error getting visiteur', e);
-    return NextResponse.json({error: 'Failed to fetch visiteur'}, {status: 500});
+    throw new Error('Failed to fetch visiteur');
   }
 };

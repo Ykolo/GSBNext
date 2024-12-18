@@ -1,6 +1,5 @@
 'use server';
 import { PrismaClient } from '@prisma/client';
-import { NextResponse } from 'next/server';
 import { medecinSchema } from '../../types/medecin';
 
 const prisma = new PrismaClient();
@@ -8,10 +7,10 @@ export const getMedecins = async () => {
   try {
     const response = await prisma.medecin.findMany();
     const parsedResponse = medecinSchema.array().parse(response);
-    return NextResponse.json(parsedResponse);
+    return parsedResponse;
   }catch(error){
     console.error('Error getting medecins', error);
-    return NextResponse.json({error: 'Failed to fetch medecins'}, {status: 500});
+    throw new Error('Failed to fetch medecins');
   }
 };
 export const getMedecin = async (id: number) => {
@@ -20,16 +19,16 @@ export const getMedecin = async (id: number) => {
       where: {id}
     });
     const parsedResponse = medecinSchema.parse(response);
-    return NextResponse.json(parsedResponse);
+    return parsedResponse;
   }catch(e){
     console.error('Error getting medecin', e);
-    return NextResponse.json({error: 'Failed to fetch medecin'}, {status: 500});
+    throw new Error('Failed to fetch medecin');
   }
 };
 export const updateMedecin = async (id: number, adresse: string, tel: string, specialite: string) =>{
   try{
     if (!id || !adresse || !tel || !specialite) {
-      return NextResponse.json({error: 'Missing required fields'}, {status: 400});
+      throw new Error('Missing required fields');
     }
     const response = await prisma.medecin.update({
       where: {id},
@@ -40,10 +39,9 @@ export const updateMedecin = async (id: number, adresse: string, tel: string, sp
       }
     });
     const parsedResponse = medecinSchema.parse(response);
-    return NextResponse.json(parsedResponse);
-
+    return parsedResponse;
   }catch(error){
     console.error('Error updating medecin', error);
-    return NextResponse.json({error: 'Failed to update medecin'}, {status: 500});
+    throw new Error('Failed to update medecin');
   }
 };

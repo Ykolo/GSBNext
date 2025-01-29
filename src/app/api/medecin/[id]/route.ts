@@ -1,5 +1,5 @@
+import { getMedecin } from '@/lib/actions/medecinActions';
 import { NextResponse } from 'next/server';
-import { getMedecin } from '../../../lib/actions/medecinActions';
 
 export const GET = async (request:Request, { params }: {params:  { id: string }}) => {
   const { id }= await params;

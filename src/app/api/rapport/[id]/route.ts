@@ -1,5 +1,5 @@
+import { getRapport } from '@/lib/actions/rapportActions';
 import { NextResponse } from 'next/server';
-import { getRapport } from '../../../lib/actions/rapportActions';
 
 export const GET = async (request:Request, { params }: {params:  { id: string }}) => {
   const { id }= await params;

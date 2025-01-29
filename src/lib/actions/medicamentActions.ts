@@ -1,7 +1,7 @@
 'use server';
 
+import { medicamentSchema } from '@/types/medicament';
 import { PrismaClient } from '@prisma/client';
-import { medicamentSchema } from '../../types/medicament';
 
 const prisma = new PrismaClient();
 export const getMedicaments = async () => {

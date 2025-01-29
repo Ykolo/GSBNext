@@ -1,7 +1,7 @@
 'use server';
 
+import { rapportSchema } from '@/types/rapport';
 import { PrismaClient } from '@prisma/client';
-import { rapportSchema } from '../../types/rapport';
 
 const prisma = new PrismaClient();
 

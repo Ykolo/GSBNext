@@ -1,5 +1,5 @@
+import { getMedecins } from '@/lib/actions/medecinActions';
 import { NextResponse } from 'next/server';
-import { getMedecins } from '../../lib/actions/medecinActions';
 
 export const GET = async () => {
   try{

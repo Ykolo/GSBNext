@@ -11,9 +11,10 @@ const Page = () => {
     queryKey: ['medecins'],
     queryFn: getMedecins
   });
-  if (isLoading) return <p>Chargement...</p>;
-  if (isError) return <p>Une erreur est survenue</p>;
+
   return (
+    isLoading ? <p>Chargement...</p> :
+    isError ? <p>Une erreur est survenue</p> :
     <div className="h-screen">
       <Navbar />
       <div className='flex justify-center gap-4'>
@@ -22,10 +23,9 @@ const Page = () => {
       </div>
         <section className='mt-16 flex items-center justify-center'>
           <div className='mx-40 grid grid-cols-3 gap-8'>
-            {medecins?.map((medecin: medecinType, index: number)=>{
-              if (index > 11) return;
-              return <MedecinCard key={medecin.id} medecin={medecin} /> ;
-            })}
+            {medecins?.map((medecin: medecinType, index: number) => (
+              index <= 11 && <MedecinCard key={medecin.id} medecin={medecin} />
+            ))}
           </div>
         </section>
         <Footer />

@@ -1,9 +1,8 @@
 'use server';
 
 import { rapportSchema } from '@/types/rapport';
-import { PrismaClient } from '@prisma/client';
+import prisma from '../prisma';
 
-const prisma = new PrismaClient();
 
 export const getRapports = async () => {
   try {

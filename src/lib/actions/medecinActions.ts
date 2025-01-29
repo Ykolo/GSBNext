@@ -1,8 +1,7 @@
 'use server';
 import { medecinSchema } from '@/types/medecin';
-import { PrismaClient } from '@prisma/client';
+import prisma from '../prisma';
 
-const prisma = new PrismaClient();
 export const getMedecins = async () => {
   try {
     const response = await prisma.medecin.findMany({

@@ -13,17 +13,17 @@ const MedecinPage = ({ params }: { params: Promise<{ id: string }> }) => {
     queryFn: () => getMedecin(parseInt(resolvedParams.id)),
   });
 
-  if (isLoading) return <p>Chargement...</p>;
-  if (isError) return <p>Une erreur est survenue</p>;
-  if (!medecin) return <p>Aucun medecin trouvé</p>;
-
-  return(
-      <div>
-        <Navbar />
-          <div className="flex flex-col items-center justify-center">
-            <p>Voici le medecin {medecin.nom} </p>
-          </div>
+  return (
+    isLoading ? <p>Chargement...</p> :
+    isError ? <p>Une erreur est survenue</p> :
+    !medecin ? <p>Aucun medecin trouvé</p> :
+    <div>
+      <Navbar />
+      <div className="flex flex-col items-center justify-center">
+        <p>Voici le medecin {medecin.nom} </p>
       </div>
+    </div>
   );
 };
+
 export default MedecinPage;

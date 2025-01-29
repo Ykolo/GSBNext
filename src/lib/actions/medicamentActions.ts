@@ -1,9 +1,8 @@
 'use server';
 
 import { medicamentSchema } from '@/types/medicament';
-import { PrismaClient } from '@prisma/client';
+import prisma from '../prisma';
 
-const prisma = new PrismaClient();
 export const getMedicaments = async () => {
   try{
     const response = await prisma.medicament.findMany();

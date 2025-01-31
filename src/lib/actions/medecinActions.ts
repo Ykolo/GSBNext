@@ -45,6 +45,26 @@ export const updateMedecin = async (id: number, adresse: string, tel: string, sp
     return parsedResponse;
   }catch(error){
     console.error('Error updating medecin', error);
-    throw new Error('Failed to update medecin');
+    return error;
   }
 };
+
+export const getMedecinByNom = async (name: string) => {
+  try{
+    const response = await prisma.medecin.findMany({
+      where: {
+        nom: {
+          contains: name.toUpperCase()
+        }
+      },
+      orderBy: {
+        nom: 'asc'
+      }
+    })
+    const parsedResponse = medecinSchema.array().parse(response);
+    return parsedResponse;
+  }catch(e){
+    console.error('Error getting medecin by nom', e);
+    throw new Error('Failed to fetch medecin');
+  }
+}

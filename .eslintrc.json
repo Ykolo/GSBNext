@@ -7,7 +7,6 @@
   ],
   "plugins": ["@typescript-eslint", "tailwindcss"],
   "rules": {
-    "semi": ["error", "always"],
     "tailwindcss/no-custom-classname": "off"
   }
 }

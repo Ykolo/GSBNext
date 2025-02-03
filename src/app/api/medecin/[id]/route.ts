@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '../../../../lib/prisma';
+import { medecinSchema } from '../../../../types/medecin';
 
 interface Props {
   params: Promise<{
@@ -26,10 +27,10 @@ export async function GET(
         error: 'Medecin not found' 
       }, { status: 404 });
     }
-
+    const parsedMedecin = medecinSchema.parse(medecin)
     return NextResponse.json({
       success: true, 
-      data: medecin
+      data: parsedMedecin
     }, { status: 200 });
 
   } catch(e) {

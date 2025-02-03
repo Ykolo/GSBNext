@@ -17,7 +17,7 @@ export const MedecinCard = ({medecin}: {medecin: medecinType}) => {
         <LuPhone size={20} />
         <p>{medecin.tel}</p>
       </div>
-      <Link href={`/medecin/${medecin.id}`}>Organiser une visite</Link>
+      <Link href={`/medecin/${medecin.id}`} prefetch={true}>Organiser une visite</Link>
     </div>
   );
 };

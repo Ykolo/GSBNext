@@ -1,5 +1,5 @@
-import { Navbar } from '@/components/Navbar';
 import Footer from '../components/Footer';
+import Navbar from '../components/Navbar';
 import Search from '../components/Search';
 
 const Page = async () => {

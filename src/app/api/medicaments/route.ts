@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import prisma from '../../../lib/prisma';
+import { medicamentSchema } from '../../../types/medicament';
 
 export const GET = async (): Promise<NextResponse> => {
   try{
@@ -7,7 +8,8 @@ export const GET = async (): Promise<NextResponse> => {
     if (!medicaments) {
       return NextResponse.json({success: false, error: 'Failed to fetch medicaments'}, {status: 500});
     }
-    return NextResponse.json({success: true, data: medicaments}, {status: 200});
+    const parsedMedicaments = medicamentSchema.array().parse(medicaments);
+    return NextResponse.json({success: true, data: parsedMedicaments}, {status: 200});
   }catch(e){
     console.error('Error getting medicaments', e);
     return NextResponse.json({success:false, error: 'Failed to fetch medicaments'}, {status: 500});

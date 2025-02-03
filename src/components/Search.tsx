@@ -24,12 +24,12 @@ const Search = () => {
             <input 
               type="text" 
               placeholder="Rechercher" 
-              className="rounded-lg border-2 border-black p-4"
+              className="rounded-lg border-2 border-black p-4 shadow-sm focus:shadow-lg"
               value={searchValue}
               onChange={(e) => setSearchValue(e.target.value)}
               />
             <button 
-              className="rounded-lg border border-black bg-black p-4 text-white hover:bg-white hover:text-black"
+              className="rounded-lg border-2 border-black bg-black p-4 text-white hover:bg-white hover:text-black shadow-sm hover:shadow-xl"
               >
               Rechercher
             </button>

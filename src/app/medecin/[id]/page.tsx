@@ -19,8 +19,15 @@ const MedecinPage = ({ params }: { params: Promise<{ id: string }> }) => {
     !medecin ? <p>Aucun medecin trouvé</p> :
     <div>
       <Navbar />
-      <div className="flex flex-col items-center justify-center">
-        <p>Voici le medecin {medecin.nom} </p>
+      <div>
+        <div className="m-8 p-4">
+          <h1>Détails du médecin:</h1>
+            <p>-{medecin.nom}  + {medecin.prenom}</p>
+            <p>-{medecin.adresse}</p>
+        </div>
+        <div className="m-8 p-4">
+          <h1>Rapports</h1>
+        </div>
       </div>
     </div>
   );

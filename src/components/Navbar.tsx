@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { LuUser } from "react-icons/lu";
 
 export const Navbar = () => {
   return (
@@ -10,13 +9,22 @@ export const Navbar = () => {
           <li>Liste des médecins</li>
           <li>Mes visites</li>
         </div>
-        <li>
-          <Link href={"/connexion"}>
-            <div className="flex items-center cursor-pointer border-2 border-black rounded-full p-2 hover:bg-black hover:text-white">
-              <LuUser size={32} />
-            </div>
-          </Link>
-        </li>
+        <div className="flex items-center gap-5">
+          <li>
+            <Link
+              href={"/connexion"}
+              className="border-2 border-black px-2 rounded-2xl py-3 shadow-sm hover:shadow-lg hover:bg-slate-100"> 
+              Connexion
+            </Link>
+          </li>
+          <li>
+            <Link
+              href={"/inscription"}
+              className="border-2 border-black px-2 rounded-2xl text-white bg-black py-3 hover:bg-slate-800">
+              Inscription
+            </Link>
+          </li>
+        </div>
       </ul>
     </div>
   );

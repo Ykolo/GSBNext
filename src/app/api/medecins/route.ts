@@ -15,7 +15,7 @@ export const GET = async (): Promise<NextResponse> => {
       return NextResponse.json({success: false, error: 'Failed to fetch medecins'}, {status: 500});
     }
     const parsedMedecin = medecinSchema.array().parse(medecin)
-    return NextResponse.json({success: true, data: parsedMedecin}, {status: 200});
+    return NextResponse.json(parsedMedecin, {status: 200});
   }catch(e){
     console.error('Error getting medecins', e);
     return NextResponse.json({success: false, error: 'Failed to fetch medecins'}, {status: 500});

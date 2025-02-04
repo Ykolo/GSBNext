@@ -19,7 +19,7 @@ export const GET = async (_request:Request, context: Props): Promise<Response> =
       return NextResponse.json({success: false, error: 'Rapport introuvable'}, {status: 404});
     }
     const parsedRapport = rapportSchema.parse(rapport);
-    return NextResponse.json({success: true, data: parsedRapport}, {status: 200});
+    return NextResponse.json(parsedRapport, {status: 200});
   }catch(e){
     console.error('Error getting rapport', e);
     return NextResponse.json({success:false, error: 'Failed to fetch rapport'}, {status: 500});

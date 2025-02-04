@@ -9,7 +9,7 @@ export const GET = async (): Promise<NextResponse> => {
       return NextResponse.json({success: false, error: 'Failed to fetch medicaments'}, {status: 500});
     }
     const parsedMedicaments = medicamentSchema.array().parse(medicaments);
-    return NextResponse.json({success: true, data: parsedMedicaments}, {status: 200});
+    return NextResponse.json(parsedMedicaments, {status: 200});
   }catch(e){
     console.error('Error getting medicaments', e);
     return NextResponse.json({success:false, error: 'Failed to fetch medicaments'}, {status: 500});

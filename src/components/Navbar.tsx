@@ -5,15 +5,21 @@ const Navbar = () => {
     <div className="m-8 p-4 text-xl font-bold">
       <ul className="flex items-center justify-between">
         <div className="flex items-center gap-10">
-          <li className="text-3xl">GSB</li>
-          <li>Liste des médecins</li>
-          <li>Mes visites</li>
+          <li className="text-3xl">
+            <Link href={"/"}>GSB</Link>
+          </li>
+          <li>
+            <Link href={"/"}>Liste des médecins</Link>
+          </li>
+          <li>
+            <Link href={"/visite"}>Mes visites</Link>
+          </li>
         </div>
         <div className="flex items-center gap-5">
           <li>
             <Link
               href={"/connexion"}
-              className="border-2 border-black px-2 rounded-2xl py-3 shadow-sm hover:shadow-lg hover:bg-slate-100"> 
+              className="border-2 border-black px-2 rounded-2xl py-3 shadow-sm hover:shadow-lg hover:bg-slate-100">
               Connexion
             </Link>
           </li>

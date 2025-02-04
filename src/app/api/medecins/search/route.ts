@@ -22,10 +22,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       }, { status: 404 });
     }
     const parsedMedecin = medecinSchema.array().parse(medecin);
-    return NextResponse.json({
-      success: true,
-      data: parsedMedecin
-    }, { status: 200 });
+    return NextResponse.json(parsedMedecin, { status: 200 });
 
   } catch (e) {
     console.error('Error searching medecins:', e);

@@ -5,11 +5,12 @@ interface Params {
   id: string;
 }
 const MedecinPage = async ({ params }: { params: Params }) => {
+  const { id } = await params;
   return (
     <div>
       <Navbar />
-      <div className="flex border-2 border-gray-300 m-20 rounded-2xl">
-        <DetailMedecin medecinId={parseInt(params.id)} />
+      <div className="flex border-2 border-gray-300 mx-60 rounded-2xl">
+        <DetailMedecin medecinId={parseInt(id)} />
       </div>
     </div>
   );

@@ -2,42 +2,30 @@ import { NextRequest, NextResponse } from 'next/server';
 import prisma from '../../../../lib/prisma';
 import { medecinSchema } from '../../../../types/medecin';
 
-interface Props {
-  params: Promise<{
-    id: string;
-  }>;
-}
-
 export async function GET(
-  _request: NextRequest,
-  context: Props
-): Promise<NextResponse> {
+  request: NextRequest,
+  { params }: { params: { id: string } }
+) {
   try {
-    const { id } = await context.params;
-    
+    const { id } = await params;
     const medecin = await prisma.medecin.findUnique({
       where: {
-        id: parseInt(id)
+        id: Number(id)
       }
-    });
-
+    })
+    
     if (!medecin) {
-      return NextResponse.json({ 
-        success: false, 
-        error: 'Medecin not found' 
-      }, { status: 404 });
+      return NextResponse.json(
+        { message: 'Médecin non trouvé' },
+        { status: 404 }
+      )
     }
-    const parsedMedecin = medecinSchema.parse(medecin)
-    return NextResponse.json({
-      success: true, 
-      data: parsedMedecin
-    }, { status: 200 });
-
-  } catch(e) {
-    console.error('Error getting medecin', e);
-    return NextResponse.json({ 
-      success: false, 
-      error: 'Failed to fetch medecin' 
-    }, { status: 500 });
+    const parsedMedecin = medecinSchema.parse(medecin);
+    return NextResponse.json(parsedMedecin, { status: 200 })
+  } catch (error) {
+    return NextResponse.json(
+      { message: 'Erreur serveur' },
+      { status: 500 }
+    )
   }
 }

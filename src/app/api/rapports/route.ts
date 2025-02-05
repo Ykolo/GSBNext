@@ -9,6 +9,9 @@ export const GET = async (): Promise<NextResponse> => {
     return NextResponse.json(parsedRapports, { status: 200 });
   } catch (e) {
     console.error('Error getting rapports', e);
-    return NextResponse.json({success:false, error: 'Failed to fetch rapports' }, { status: 500 });
+    return NextResponse.json(
+      { success: false, error: 'Failed to fetch rapports' },
+      { status: 500 }
+    );
   }
 };

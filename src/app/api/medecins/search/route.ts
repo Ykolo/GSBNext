@@ -11,24 +11,29 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       where: {
         nom: {
           contains: nom,
-          mode: 'insensitive'
-        }
-      }
+          mode: 'insensitive',
+        },
+      },
     });
     if (!medecin) {
-      return NextResponse.json({
-        success: false,
-        error: 'No medecins found'
-      }, { status: 404 });
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'No medecins found',
+        },
+        { status: 404 }
+      );
     }
     const parsedMedecin = medecinSchema.array().parse(medecin);
     return NextResponse.json(parsedMedecin, { status: 200 });
-
   } catch (e) {
     console.error('Error searching medecins:', e);
-    return NextResponse.json({
-      success: false,
-      error: 'Failed to search medecins'
-    }, { status: 500 });
+    return NextResponse.json(
+      {
+        success: false,
+        error: 'Failed to search medecins',
+      },
+      { status: 500 }
+    );
   }
 }

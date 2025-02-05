@@ -23,8 +23,8 @@
   ::file-selector-button {
     border-color: var(--color-gray-200, currentColor);
   }
-  h1{
-    @apply text-xl font-bold
+  h1 {
+    @apply text-xl font-bold;
   }
 }
 

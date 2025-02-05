@@ -3,63 +3,73 @@
 import { rapportSchema } from '@/types/rapport';
 import prisma from '../prisma';
 
-
 export const getRapports = async () => {
   try {
     const response = await prisma.rapport.findMany();
     const parsedResponse = rapportSchema.array().parse(response);
     return parsedResponse;
-  }catch(e){
+  } catch (e) {
     console.error('Error getting rapports', e);
     throw new Error('Failed to fetch rapports');
   }
 };
 
 export const getRapport = async (id: number) => {
-  try{
+  try {
     const response = await prisma.rapport.findUnique({
-      where: {id}
+      where: { id },
     });
     const parsedResponse = rapportSchema.parse(response);
     return parsedResponse;
-  }catch(e){
+  } catch (e) {
     console.error('Error getting rapport', e);
     throw new Error('Failed to fetch rapport');
   }
 };
 
 export const getRapportsByDate = async (date: Date) => {
-  try{
+  try {
     const response = await prisma.rapport.findMany({
-      where: {date}
+      where: { date },
     });
     const parsedResponse = rapportSchema.array().parse(response);
     return parsedResponse;
-  }catch(e){
+  } catch (e) {
     console.error('Error getting rapports by date', e);
     throw new Error('Failed to fetch rapports by date');
   }
 };
 
-export const updateRapport = async(id: number, motif: string, bilan: string) => {
-  try{
+export const updateRapport = async (
+  id: number,
+  motif: string,
+  bilan: string
+) => {
+  try {
     const response = await prisma.rapport.update({
-      where: {id},
+      where: { id },
       data: {
         motif,
-        bilan
-      }
+        bilan,
+      },
     });
     const parsedResponse = rapportSchema.parse(response);
     return parsedResponse;
-  }catch(e){
+  } catch (e) {
     console.error('Error updating rapport', e);
     throw new Error('Failed to update rapport');
   }
 };
 
-export const createRapport = async (idMedecin: number, idVisiteur: string, bilan: string, motif: string, date: Date, medicaments: [{idMedicament: string, qte: number}]) => {
-  try{ 
+export const createRapport = async (
+  idMedecin: number,
+  idVisiteur: string,
+  bilan: string,
+  motif: string,
+  date: Date,
+  medicaments: [{ idMedicament: string; qte: number }]
+) => {
+  try {
     const response = await prisma.rapport.create({
       data: {
         idmedecin: idMedecin,
@@ -67,21 +77,21 @@ export const createRapport = async (idMedecin: number, idVisiteur: string, bilan
         bilan,
         motif,
         date,
-      }
+      },
     });
     const idRapport = response.id;
-    if(medicaments.length > 0 ){
-      medicaments.map(async(medicament) =>{
+    if (medicaments.length > 0) {
+      medicaments.map(async medicament => {
         await prisma.offrir.create({
-          data:{
+          data: {
             idrapport: idRapport,
             idmedicament: medicament.idMedicament,
             quantite: medicament.qte,
-          }
+          },
         });
       });
     }
-  }catch(e){
+  } catch (e) {
     console.error('Error creating rapport', e);
     throw new Error('Failed to create rapport');
   }

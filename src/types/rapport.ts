@@ -4,7 +4,7 @@ import { offrirSchema } from './offrir';
 const visiteurSchema = z.object({
   nom: z.string().max(50, { message: 'Too long' }).nullish(),
   prenom: z.string().max(50, { message: 'Too long' }).nullish(),
-})
+});
 
 export const rapportSchema = z.object({
   id: z.number().int(),
@@ -18,5 +18,3 @@ export const rapportSchema = z.object({
 });
 
 export type rapportType = z.infer<typeof rapportSchema>;
-
-

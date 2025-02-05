@@ -7,28 +7,34 @@ export async function GET(
   { params }: { params: { id: string } }
 ) {
   try {
-    const { id } = await params
+    const { id } = await params;
     const idMedecin = Number(id);
     if (isNaN(idMedecin)) {
-      return NextResponse.json({ message: 'ID médecin invalide' }, { status: 400 });
+      return NextResponse.json(
+        { message: 'ID médecin invalide' },
+        { status: 400 }
+      );
     }
     const rapports = await prisma.rapport.findMany({
       where: {
-        idmedecin: idMedecin 
+        idmedecin: idMedecin,
       },
       include: {
         visiteur: {
           select: {
             id: true,
             nom: true,
-            prenom: true
-          }
-        }
-      }
+            prenom: true,
+          },
+        },
+      },
     });
 
     if (rapports.length === 0) {
-      return NextResponse.json({ message: 'Aucun rapport trouvé' }, { status: 404 });
+      return NextResponse.json(
+        { message: 'Aucun rapport trouvé' },
+        { status: 404 }
+      );
     }
     const parsedRapports = rapportSchema.array().parse(rapports);
 

@@ -37,31 +37,33 @@ export const PaginatedMedecins = ({ medecins }: Props) => {
   }, [currentPage]);
 
   return (
-    <div className='min-h-screen'>
-      <section className='mt-16 flex items-center justify-center'>
-        <div className='mx-40 grid grid-cols-3 gap-8'>
+    <div className="min-h-screen">
+      <section className="mt-16 flex items-center justify-center">
+        <div className="mx-40 grid grid-cols-3 gap-8">
           {currentMedecins.map((medecin: medecinType) => (
             <MedecinCard key={medecin.id} medecin={medecin} />
           ))}
         </div>
       </section>
-      
-      <div className="flex flex-col items-center gap-4 my-8">
+
+      <div className="my-8 flex flex-col items-center gap-4">
         <div className="flex justify-center gap-4">
-          <button 
+          <button
             onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
             disabled={currentPage === 1}
-            className="px-4 py-2 rounded-lg border border-black disabled:opacity-50"
+            className="rounded-lg border border-black px-4 py-2 disabled:opacity-50"
           >
             Précédent
           </button>
           <span className="px-4 py-2">
             Page {currentPage} sur {totalPages}
           </span>
-          <button 
-            onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+          <button
+            onClick={() =>
+              setCurrentPage(prev => Math.min(prev + 1, totalPages))
+            }
             disabled={currentPage === totalPages}
-            className="px-4 py-2 rounded-lg border border-black disabled:opacity-50"
+            className="rounded-lg border border-black px-4 py-2 disabled:opacity-50"
           >
             Suivant
           </button>
@@ -75,7 +77,7 @@ export const PaginatedMedecins = ({ medecins }: Props) => {
             value={inputPage}
             onChange={handlePageInput}
             onKeyDown={handlePageSubmit}
-            className="w-16 px-2 py-1 border border-black rounded-lg text-center"
+            className="w-16 rounded-lg border border-black px-2 py-1 text-center"
           />
         </div>
       </div>

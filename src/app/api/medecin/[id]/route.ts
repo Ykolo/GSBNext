@@ -10,22 +10,19 @@ export async function GET(
     const { id } = await params;
     const medecin = await prisma.medecin.findUnique({
       where: {
-        id: Number(id)
-      }
-    })
-    
+        id: Number(id),
+      },
+    });
+
     if (!medecin) {
       return NextResponse.json(
         { message: 'Médecin non trouvé' },
         { status: 404 }
-      )
+      );
     }
     const parsedMedecin = medecinSchema.parse(medecin);
-    return NextResponse.json(parsedMedecin, { status: 200 })
+    return NextResponse.json(parsedMedecin, { status: 200 });
   } catch (error) {
-    return NextResponse.json(
-      { message: 'Erreur serveur' },
-      { status: 500 }
-    )
+    return NextResponse.json({ message: 'Erreur serveur' }, { status: 500 });
   }
 }

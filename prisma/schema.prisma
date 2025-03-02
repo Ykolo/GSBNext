@@ -63,7 +63,7 @@ model visiteur {
   nom          String?   @db.Char(30)
   prenom       String?   @db.Char(30)
   login        String?   @db.Char(20)
-  mdp          String?   @db.Char(20)
+  mdp          String?   @db.VarChar(100) // Changer de CHAR(20) à VARCHAR(100)
   adresse      String?   @db.Char(30)
   cp           String?   @db.Char(5)
   ville        String?   @db.Char(30)

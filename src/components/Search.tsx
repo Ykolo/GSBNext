@@ -1,23 +1,25 @@
-'use client';
+"use client";
 
-import { fetchMedecins, searchMedecins } from '@/lib/api';
-import { useQuery } from '@tanstack/react-query';
-import { useState } from 'react';
-import { PaginatedMedecins } from './PaginatedMedecins';
+import { fetchMedecins, searchMedecins } from "@/lib/api";
+import { useQuery } from "@tanstack/react-query";
+import { useState } from "react";
+import { PaginatedMedecins } from "./PaginatedMedecins";
+import { Button } from "./ui/button";
+import { Input } from "./ui/input";
 
 const Search = () => {
-  const [searchValue, setSearchValue] = useState('');
+  const [searchValue, setSearchValue] = useState("");
 
   const {
     data: medecins,
     isLoading,
     isError,
   } = useQuery({
-    queryKey: ['medecins'],
+    queryKey: ["medecins"],
     queryFn: fetchMedecins,
   });
   const { data: filteredMedecins } = useQuery({
-    queryKey: ['filteredMedecins', searchValue],
+    queryKey: ["filteredMedecins", searchValue],
     queryFn: () => searchMedecins(searchValue),
     enabled: searchValue.length > 0,
   });
@@ -31,19 +33,15 @@ const Search = () => {
   ) : (
     <div>
       <div className="flex justify-center gap-4">
-        <input
-          type="text"
+        <Input
           placeholder="Rechercher"
-          className="rounded-lg border-2 border-black p-4 shadow-sm focus:shadow-lg"
           value={searchValue}
           onChange={e => setSearchValue(e.target.value)}
+          className="w-auto max-w-xs border-2 border-black py-8"
         />
-        <button
-          className="rounded-lg border-2 border-black bg-black p-4 text-white shadow-sm hover:bg-white hover:text-black hover:shadow-xl"
-          onClick={() => searchMedecins(searchValue)}
-        >
+        <Button className="py-8" onClick={() => searchMedecins(searchValue)}>
           Rechercher
-        </button>
+        </Button>
         <div></div>
       </div>
       {!searchValue ? (

@@ -1,68 +1,70 @@
 "use client";
-import { signIn, signOut, useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
+
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Label } from "@radix-ui/react-label";
 import { useState } from "react";
+import { FormProvider, useForm } from "react-hook-form";
+import { z } from "zod";
+import { Button } from "../ui/button";
+import { FormControl, FormField, FormItem, FormMessage } from "../ui/form";
+import { Input } from "../ui/input";
+
+const LoginFormSchema = z.object({
+  login: z
+    .string()
+    .min(2, { message: "Le pseudo doit avoir au moins 2 caractères" }),
+  password: z
+    .string()
+    .min(8, { message: "Le mot de passe doit avoir 8 caractères" }),
+});
+type LoginFormType = z.infer<typeof LoginFormSchema>;
 
 const FormConnexion = () => {
-  const { data: session } = useSession();
   const [message, setMessage] = useState("");
-  const router = useRouter();
-  if (session) {
-    return (
-      <div>
-        <p>Bienvenue {session?.user?.name}</p>
-        <button onClick={() => signOut()}>Déconnexion</button>
-      </div>
-    );
-  }
-  const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const formData = new FormData(e.currentTarget);
-    const response = await signIn("credentials", {
-      login: formData.get("login")?.toString(),
-      password: formData.get("password")?.toString(),
-      redirect: false,
-    });
-    if (response?.error) {
-      setMessage("Connexion échouée");
-    } else {
-      router.push("/");
-    }
+
+  const form = useForm<LoginFormType>({
+    resolver: zodResolver(LoginFormSchema),
+  });
+  const onSubmit = (data: LoginFormType) => {
+    console.log(data);
+    setMessage("Connexion réussie");
   };
   return (
-    <form className="flex flex-col gap-4" onSubmit={handleLogin}>
-      <div className="flex flex-col gap-2">
-        <label htmlFor="email" className="ml-4">
-          Pseudo
-        </label>
-        <input
-          type="text"
-          id="login"
-          name="login"
-          className="rounded-4xl border-2 border-black p-2 pl-4"
-          placeholder="Pseudo"
-        />
-      </div>
-      <div className="flex flex-col gap-2">
-        <label htmlFor="password" className="ml-4">
-          Mot de passe
-        </label>
-        <input
-          type="password"
-          id="password"
-          name="password"
-          className="rounded-4xl border-2 border-black p-2 pl-4"
-          placeholder="Mot de passe"
-        />
-      </div>
-      <button
-        type="submit"
-        className="rounded-4xl bg-black p-2 text-white hover:bg-gray-700"
+    <FormProvider {...form}>
+      <form
+        className="flex flex-col gap-4"
+        onSubmit={form.handleSubmit(onSubmit)}
       >
-        Connexion
-      </button>
-      {message && <p className="text-red-500">{message}</p>}
-    </form>
+        <FormField
+          control={form.control}
+          name="login"
+          render={({ field }) => (
+            <FormItem>
+              <Label htmlFor="login">Pseudo</Label>
+              <FormControl>
+                <Input id="login" placeholder="Pseudo" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="password"
+          render={({ field }) => (
+            <FormItem>
+              <Label htmlFor="password">Mot de passe</Label>
+              <FormControl>
+                <Input id="password" placeholder="Mot de passe" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <Button type="submit">Connexion</Button>
+        {message && <p className="text-center text-green-500">{message}</p>}
+      </form>
+    </FormProvider>
   );
 };
 export default FormConnexion;

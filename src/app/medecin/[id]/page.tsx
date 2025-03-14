@@ -1,5 +1,5 @@
-import DetailMedecin from '../../../components/DetailMedecin';
-import Navbar from '../../../components/Navbar';
+import DetailMedecin from "../../../components/DetailMedecin";
+import Navbar from "../../../components/Navbar";
 
 interface Params {
   id: string;
@@ -9,9 +9,9 @@ const MedecinPage = async ({ params }: { params: Params }) => {
   return (
     <div>
       <Navbar />
-      <div className="mx-60 flex rounded-2xl border-2 border-gray-300">
-        <DetailMedecin medecinId={parseInt(id)} />
-      </div>
+      <main className="mx-60">
+        <DetailMedecin medecinID={parseInt(id)} />
+      </main>
     </div>
   );
 };

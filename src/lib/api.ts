@@ -1,15 +1,15 @@
 export const fetchMedecins = async () => {
   try {
-    const response = await fetch('/api/medecins');
+    const response = await fetch("/api/medecins");
     const data = await response.json();
     return data;
   } catch (error) {
-    console.error('Error fetching medecins:', error);
+    console.error("Error fetching medecins:", error);
     return [];
   }
 };
 
-export const searchMedecins = async (search: string) => {
+export const searchMedecinsByName = async (search: string) => {
   try {
     const response = await fetch(
       `/api/medecins/search?nom=${encodeURIComponent(search)}`
@@ -17,7 +17,7 @@ export const searchMedecins = async (search: string) => {
     const data = await response.json();
     return data;
   } catch (error) {
-    console.error('Error searching medecins:', error);
+    console.error("Error searching medecins:", error);
     return [];
   }
 };
@@ -28,7 +28,7 @@ export const fetchMedecin = async (id: number) => {
     const data = await response.json();
     return data;
   } catch (error) {
-    console.error('Error fetching medecin:', error);
+    console.error("Error fetching medecin:", error);
     return null;
   }
 };
@@ -39,7 +39,30 @@ export const fetchRapportsByMedecin = async (idMedecin: number) => {
     const data = await response.json();
     return data || [];
   } catch (error) {
-    console.error('Error fetching rapports:', error);
+    console.error("Error fetching rapports:", error);
+    return [];
+  }
+};
+
+export const fetchSpecialities = async () => {
+  try {
+    const response = await fetch("/api/specialities");
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Error fetching specialities:", error);
+    return [];
+  }
+};
+export const SearchMedecinsBySpeciality = async (speciality: string) => {
+  try {
+    const response = await fetch(
+      `/api/medecins/search?spe=${encodeURIComponent(speciality)}`
+    );
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Error searching medecins:", error);
     return [];
   }
 };

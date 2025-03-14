@@ -25,6 +25,7 @@ const Navbar = () => {
           </li>
         </div>
         <div className="flex items-center gap-5">
+          {/* <ModeToogle /> */}
           <li>
             <Link href={"/connexion"}>
               <Button variant={"outline"} className="py-6">

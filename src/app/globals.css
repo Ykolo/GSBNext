@@ -1,4 +1,4 @@
-@import 'tailwindcss';
+@import "tailwindcss";
 /*
   ---break---
 */
@@ -10,6 +10,7 @@
 
 @theme {
   --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
 
   --color-background: var(--background);
   --color-foreground: var(--foreground);

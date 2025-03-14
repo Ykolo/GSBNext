@@ -1,13 +1,21 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useState } from "react";
-import { useForm } from "react-hook-form";
+import { useEffect, useState } from "react";
+import { FormProvider, useForm } from "react-hook-form";
+import { toast } from "sonner";
 import { z } from "zod";
 import { labels } from "../../data/label";
+import { createVisiteur } from "../../lib/actions/visiteurAction";
 import { Button } from "../ui/button";
+import {
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "../ui/form";
 import { Input } from "../ui/input";
-import { Label } from "../ui/label";
 
 const SignUpFormSchema = z.object({
   nom: z
@@ -23,62 +31,125 @@ const SignUpFormSchema = z.object({
   cp: z
     .string()
     .regex(/^\d{5}$/, { message: "Le code postal doit contenir 5 chiffres" }),
-  data: z.string().refine(
-    date => {
-      !isNaN(Date.parse(date));
-    },
-    { message: "Date Invalide" }
-  ),
+  dateembauche: z.string().refine(val => !isNaN(Date.parse(val)), {
+    message: "Date invalide",
+  }),
+
   login: z
     .string()
     .min(2, { message: "Le pseudo doit avoir au moins 2 caractères" }),
-  password: z
-    .string()
-    .min(8, { message: "Le mot de passe doit avoir 8 caractères" }),
+  password: z.string(),
 });
 type SignUpFormType = z.infer<typeof SignUpFormSchema>;
 
 const FormInscription = () => {
   const [message, setMessage] = useState("");
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<SignUpFormType>({
+  const form = useForm<SignUpFormType>({
     resolver: zodResolver(SignUpFormSchema),
+    defaultValues: {
+      nom: "",
+      prenom: "",
+      adresse: "",
+      ville: "",
+      cp: "",
+      login: "",
+      password: "",
+      dateembauche: "",
+    },
   });
-  const onSubmit = (data: SignUpFormType) => {
+  useEffect(() => {
+    const today = new Date().toISOString().split("T")[0];
+    form.setValue("dateembauche", today);
+  }, []);
+  const onSubmit = async (data: SignUpFormType) => {
     console.log(data);
-    setMessage("Form submitted!");
-  };
-  return (
-    <form className="flex flex-col gap-4" onSubmit={handleSubmit(onSubmit)}>
-      {labels.map(({ label, id, type = "text" }) => {
-        return (
-          <div className="flex flex-col gap-2" key={id}>
-            <Label htmlFor={id} className="ml-4">
-              {label}
-            </Label>
-            <Input
-              type={type}
-              id={id}
-              {...register(id as keyof SignUpFormType)}
-              placeholder={label}
-            />
-            {errors[id as keyof SignUpFormType] && (
-              <p className="ml-4 text-sm text-red-500">
-                {errors[id as keyof SignUpFormType]?.message as string}
-              </p>
-            )}
-          </div>
+    const newVisiteur = {
+      id: crypto.randomUUID().slice(0, 4),
+      timespan: BigInt(Date.now()),
+      nom: data.nom,
+      prenom: data.prenom,
+      adresse: data.adresse,
+      ville: data.ville,
+      cp: data.cp,
+      login: data.login,
+      mdp: data.password,
+      rapport: [],
+    };
+    try {
+      const response = await createVisiteur(newVisiteur);
+      if (!response || response.error) {
+        toast.error(
+          response?.error || "Erreur lors de la création de visiteur"
         );
-      })}
-      <Button type="submit" variant={"default"}>
-        Inscription
-      </Button>
-      {message && <p>{message}</p>}
-    </form>
+      }
+      setMessage("Inscription réussie !");
+      toast.success(message, { duration: 2000 });
+    } catch (e: any) {
+      console.error("Error creating visiteur", e);
+      setMessage("Erreur lors de la création de visiteur" + e.message);
+      toast.error(message, { duration: 2000 });
+    }
+  };
+
+  return (
+    <FormProvider {...form}>
+      <form
+        className="flex flex-col gap-4"
+        onSubmit={form.handleSubmit(onSubmit)}
+      >
+        <div className="flex gap-4">
+          {labels
+            .filter(({ id }) => id === "nom" || id === "prenom")
+            .map(({ label, id, type = "text" }) => (
+              <div className="flex w-full flex-col gap-2" key={id}>
+                <FormField
+                  control={form.control}
+                  name={id as keyof SignUpFormType}
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel htmlFor={id}>{label}</FormLabel>
+                      <FormControl>
+                        <Input
+                          id={id}
+                          type={type}
+                          placeholder={label}
+                          {...field}
+                          value={field.value ?? ""}
+                          onChange={e => field.onChange(e.target.value)}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+            ))}
+        </div>
+        {labels
+          .filter(({ id }) => id !== "nom" && id !== "prenom")
+          .map(({ label, id, type = "text" }) => (
+            <FormField
+              key={id}
+              control={form.control}
+              name={id as keyof SignUpFormType}
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel htmlFor={id}>{label}</FormLabel>
+                  <FormControl>
+                    <Input id={id} type={type} placeholder={label} {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          ))}
+        <Button type="submit" variant={"default"}>
+          Inscription
+        </Button>
+      </form>
+    </FormProvider>
   );
 };
+
 export default FormInscription;

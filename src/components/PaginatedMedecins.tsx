@@ -1,7 +1,15 @@
-'use client';
-import { medecinType } from '@/types/medecin';
-import { useEffect, useState } from 'react';
-import { MedecinCard } from './Medecin';
+"use client";
+import { Input } from "@/components/ui/input";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
+import { medecinType } from "@/types/medecin";
+import { useEffect, useState } from "react";
+import { MedecinCard } from "./Medecin";
 
 type Props = {
   medecins: medecinType[];
@@ -22,7 +30,7 @@ export const PaginatedMedecins = ({ medecins }: Props) => {
   };
 
   const handlePageSubmit = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter') {
+    if (e.key === "Enter") {
       const value = parseInt(inputPage);
       if (value >= 1 && value <= totalPages) {
         setCurrentPage(value);
@@ -47,37 +55,45 @@ export const PaginatedMedecins = ({ medecins }: Props) => {
       </section>
 
       <div className="my-8 flex flex-col items-center gap-4">
-        <div className="flex justify-center gap-4">
-          <button
-            onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-            disabled={currentPage === 1}
-            className="rounded-lg border border-black px-4 py-2 disabled:opacity-50"
-          >
-            Précédent
-          </button>
-          <span className="px-4 py-2">
-            Page {currentPage} sur {totalPages}
-          </span>
-          <button
-            onClick={() =>
-              setCurrentPage(prev => Math.min(prev + 1, totalPages))
-            }
-            disabled={currentPage === totalPages}
-            className="rounded-lg border border-black px-4 py-2 disabled:opacity-50"
-          >
-            Suivant
-          </button>
-        </div>
+        <Pagination>
+          <PaginationContent>
+            <PaginationItem>
+              <PaginationPrevious
+                onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                className={
+                  currentPage === 1
+                    ? "pointer-events-none opacity-50"
+                    : "cursor-pointer"
+                }
+              />
+            </PaginationItem>
+            <span className="px-4 py-2">
+              Page {currentPage} sur {totalPages}
+            </span>
+            <PaginationItem>
+              <PaginationNext
+                onClick={() =>
+                  setCurrentPage(prev => Math.min(prev + 1, totalPages))
+                }
+                className={
+                  currentPage === totalPages
+                    ? "pointer-events-none opacity-50"
+                    : "cursor-pointer"
+                }
+              />
+            </PaginationItem>
+          </PaginationContent>
+        </Pagination>
         <div className="flex items-center gap-2">
           <span>Aller à la page:</span>
-          <input
+          <Input
             type="number"
             min="1"
             max={totalPages}
             value={inputPage}
             onChange={handlePageInput}
             onKeyDown={handlePageSubmit}
-            className="w-16 rounded-lg border border-black px-2 py-1 text-center"
+            className="w-16 text-center"
           />
         </div>
       </div>

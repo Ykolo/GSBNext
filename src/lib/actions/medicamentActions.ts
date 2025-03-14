@@ -1,7 +1,7 @@
-'use server';
+"use server";
 
-import { medicamentSchema } from '@/types/medicament';
-import prisma from '../prisma';
+import { medicamentSchema } from "@/types/medicament";
+import prisma from "../prisma";
 
 export const getMedicaments = async () => {
   try {
@@ -9,7 +9,7 @@ export const getMedicaments = async () => {
     const parsedResponse = medicamentSchema.array().parse(response);
     return parsedResponse;
   } catch (e) {
-    console.error('Error getting medicaments', e);
-    throw new Error('Failed to fetch medicaments');
+    console.error("Error getting medicaments", e);
+    throw new Error("Failed to fetch medicaments");
   }
 };

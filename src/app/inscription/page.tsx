@@ -8,9 +8,11 @@ const InscriptionPage = async () => {
     <div className="flex min-h-screen flex-col">
       <Navbar />
       <main className="flex flex-1 flex-col items-center justify-center gap-5">
-        <Card className="w-full max-w-md border-2 border-gray-400">
+        <Card className="w-full max-w-xl border-2 border-gray-400">
           <CardHeader>
-            <CardTitle className="text-2xl font-bold">Inscription</CardTitle>
+            <CardTitle className="ml-4 text-2xl font-bold">
+              Inscription
+            </CardTitle>
           </CardHeader>
           <CardContent>
             <FormInscription />

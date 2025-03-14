@@ -1,7 +1,7 @@
-'use server';
+"use server";
 
-import { rapportSchema } from '@/types/rapport';
-import prisma from '../prisma';
+import { rapportSchema } from "@/types/rapport";
+import prisma from "../prisma";
 
 export const getRapports = async () => {
   try {
@@ -9,8 +9,8 @@ export const getRapports = async () => {
     const parsedResponse = rapportSchema.array().parse(response);
     return parsedResponse;
   } catch (e) {
-    console.error('Error getting rapports', e);
-    throw new Error('Failed to fetch rapports');
+    console.error("Error getting rapports", e);
+    throw new Error("Failed to fetch rapports");
   }
 };
 
@@ -22,8 +22,8 @@ export const getRapport = async (id: number) => {
     const parsedResponse = rapportSchema.parse(response);
     return parsedResponse;
   } catch (e) {
-    console.error('Error getting rapport', e);
-    throw new Error('Failed to fetch rapport');
+    console.error("Error getting rapport", e);
+    throw new Error("Failed to fetch rapport");
   }
 };
 
@@ -35,8 +35,8 @@ export const getRapportsByDate = async (date: Date) => {
     const parsedResponse = rapportSchema.array().parse(response);
     return parsedResponse;
   } catch (e) {
-    console.error('Error getting rapports by date', e);
-    throw new Error('Failed to fetch rapports by date');
+    console.error("Error getting rapports by date", e);
+    throw new Error("Failed to fetch rapports by date");
   }
 };
 
@@ -56,8 +56,8 @@ export const updateRapport = async (
     const parsedResponse = rapportSchema.parse(response);
     return parsedResponse;
   } catch (e) {
-    console.error('Error updating rapport', e);
-    throw new Error('Failed to update rapport');
+    console.error("Error updating rapport", e);
+    throw new Error("Failed to update rapport");
   }
 };
 
@@ -91,8 +91,10 @@ export const createRapport = async (
         });
       });
     }
+    const parsedResponse = rapportSchema.parse(response);
+    return parsedResponse;
   } catch (e) {
-    console.error('Error creating rapport', e);
-    throw new Error('Failed to create rapport');
+    console.error("Error creating rapport", e);
+    throw new Error("Failed to create rapport");
   }
 };

@@ -19,8 +19,8 @@ const Navbar = () => {
             </Link>
           </li>
           <li>
-            <Link href={"/visite"}>
-              <Button variant={"link"}>Mes visites</Button>
+            <Link href={"/dashboard"}>
+              <Button variant={"link"}>Dashboard</Button>
             </Link>
           </li>
         </div>

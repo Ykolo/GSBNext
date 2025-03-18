@@ -19,26 +19,31 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { fetchMedecin, fetchRapportsByMedecin } from "@/lib/api";
+import { fetchMedecin, fetchRapportsByMedecin, fetchUser } from "@/lib/api";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 import { z } from "zod";
+import { createRapport } from "../lib/actions/rapportActions";
 import { rapportType } from "../types/rapport";
 
 interface DetailMedecinProps {
   medecinID: number;
 }
-
 const rapportSchema = z.object({
-  nom: z.string().min(1, "Nom requis"),
-  prenom: z.string().min(1, "Prénom requis"),
   date: z.string().min(1, "Date requise"),
   bilan: z.string().min(1, "Bilan requis"),
   motif: z.string().min(1, "Motif requis"),
 });
 
 type RapportFormType = z.infer<typeof rapportSchema>;
+
+const labels = [
+  { label: "Date", id: "date", type: "date" },
+  { label: "Motif", id: "motif", type: "text" },
+  { label: "Bilan", id: "bilan", type: "text" },
+];
 
 const DetailMedecin = ({ medecinID: medecinID }: DetailMedecinProps) => {
   const {
@@ -56,18 +61,46 @@ const DetailMedecin = ({ medecinID: medecinID }: DetailMedecinProps) => {
     initialData: [] as rapportType[],
   });
 
+  const {
+    data: user,
+    isLoading: isUserLoading,
+    isError: isUserError,
+  } = useQuery({
+    queryKey: ["user"],
+    queryFn: fetchUser,
+  });
+
+  // Initialize query client at component level
+  const queryClient = useQueryClient();
+
   const form = useForm<RapportFormType>({
     resolver: zodResolver(rapportSchema),
   });
 
-  const onSubmit = (data: RapportFormType) => {
-    console.log(data);
+  const onSubmit = async (data: RapportFormType) => {
+    try {
+      const dateObj = new Date(data.date);
+      await createRapport(
+        medecin.id,
+        user.decoded.id,
+        data.bilan,
+        data.motif,
+        dateObj
+      );
+      toast.success("Rapport créé avec succès");
+      form.reset();
+
+      queryClient.invalidateQueries({ queryKey: ["rapports", medecinID] });
+    } catch (e: any) {
+      console.error(e);
+      toast.error(`Erreur lors de la création du rapport: ${e.message}`);
+    }
   };
 
   const rapportsList = Array.isArray(rapports) ? rapports : [];
 
   return (
-    <Card className="mt-4 ml-8 w-full">
+    <Card className="w-full">
       <CardHeader>
         <CardTitle className="text-2xl font-bold">
           Détails du médecin:
@@ -114,69 +147,44 @@ const DetailMedecin = ({ medecinID: medecinID }: DetailMedecinProps) => {
                   ))}
               </TableBody>
             </Table>
-            <h2 className="mt-4 text-xl font-bold">
-              Ajout d'un rapport de visite
-            </h2>
-            <Form {...form}>
-              <form
-                onSubmit={form.handleSubmit(onSubmit)}
-                className="mt-4 flex flex-col gap-4"
-              >
-                {/* Nom et prénom sur la même ligne */}
-                <div className="flex w-full gap-4">
-                  <FormField
-                    control={form.control}
-                    name="nom"
-                    render={({ field }) => (
-                      <FormItem className="flex-1">
-                        <FormLabel>Nom</FormLabel>
-                        <FormControl>
-                          <Input {...field} placeholder="nom" />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="prenom"
-                    render={({ field }) => (
-                      <FormItem className="flex-1">
-                        <FormLabel>Prénom</FormLabel>
-                        <FormControl>
-                          <Input {...field} placeholder="prénom" />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-
-                {/* Autres champs */}
-                {["date", "bilan", "motif"].map(field => (
-                  <FormField
-                    key={field}
-                    control={form.control}
-                    name={field as keyof RapportFormType}
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>
-                          {field.name.charAt(0).toUpperCase() +
-                            field.name.slice(1)}
-                        </FormLabel>
-                        <FormControl>
-                          <Input {...field} placeholder={field.name} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                ))}
-                <Button type="submit" className="mt-4">
-                  Envoyer
-                </Button>
-              </form>
-            </Form>
+            {user && user.decoded && user.decoded.login && (
+              <div>
+                <h2 className="mt-4 text-xl font-bold">
+                  Ajout d'un rapport de visite
+                </h2>
+                <Form {...form}>
+                  <form
+                    onSubmit={form.handleSubmit(onSubmit)}
+                    className="mt-4 flex flex-col gap-4"
+                  >
+                    {labels.map(({ label, id, type = "text" }) => (
+                      <FormField
+                        key={id}
+                        control={form.control}
+                        name={id as keyof RapportFormType}
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>{label}</FormLabel>
+                            <FormControl>
+                              <Input
+                                {...field}
+                                type={type}
+                                placeholder={id}
+                                value={field.value ?? ""}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    ))}
+                    <Button type="submit" className="mt-4">
+                      Envoyer
+                    </Button>
+                  </form>
+                </Form>
+              </div>
+            )}
           </>
         )}
       </CardContent>

@@ -42,8 +42,8 @@ export const getRapportsByDate = async (date: Date) => {
 
 export const updateRapport = async (
   id: number,
-  motif: string,
-  bilan: string
+  motif?: string,
+  bilan?: string
 ) => {
   try {
     const response = await prisma.rapport.update({
@@ -55,8 +55,8 @@ export const updateRapport = async (
     });
     const parsedResponse = rapportSchema.parse(response);
     return parsedResponse;
-  } catch (e) {
-    console.error("Error updating rapport", e);
+  } catch (e: any) {
+    console.error("Error updating rapport", e.message);
     throw new Error("Failed to update rapport");
   }
 };
@@ -67,11 +67,20 @@ export const createRapport = async (
   bilan: string,
   motif: string,
   date: Date,
-  medicaments: [{ idMedicament: string; qte: number }]
+  medicaments?: [{ idMedicament: string; qte: number }]
 ) => {
   try {
+    const lastRapport = await prisma.rapport.findFirst({
+      orderBy: {
+        id: "desc",
+      },
+    });
+
+    const nextId = lastRapport ? lastRapport.id + 1 : 1;
+
     const response = await prisma.rapport.create({
       data: {
+        id: nextId,
         idmedecin: idMedecin,
         idvisiteur: idVisiteur,
         bilan,
@@ -79,22 +88,64 @@ export const createRapport = async (
         date,
       },
     });
+
     const idRapport = response.id;
-    if (medicaments.length > 0) {
-      medicaments.map(async medicament => {
-        await prisma.offrir.create({
-          data: {
-            idrapport: idRapport,
-            idmedicament: medicament.idMedicament,
-            quantite: medicament.qte,
-          },
-        });
-      });
+
+    if (medicaments && medicaments.length > 0) {
+      await Promise.all(
+        medicaments.map(medicament =>
+          prisma.offrir.create({
+            data: {
+              idrapport: idRapport,
+              idmedicament: medicament.idMedicament,
+              quantite: medicament.qte,
+            },
+          })
+        )
+      );
     }
+
     const parsedResponse = rapportSchema.parse(response);
-    return parsedResponse;
-  } catch (e) {
+    return { success: true, parsedResponse };
+  } catch (e: any) {
     console.error("Error creating rapport", e);
-    throw new Error("Failed to create rapport");
+    if (e.code === "P2002") {
+      console.log("Attempting to recover from ID collision...");
+      throw new Error(`ID collision detected. Please try again.`);
+    }
+    throw new Error(`Failed to create rapport: ${e.message}`);
+  }
+};
+
+export const deleteRapport = async (id: number) => {
+  try {
+    console.log("📌 Tentative de suppression du rapport ID :", id);
+
+    const rapport = await prisma.rapport.findUnique({
+      where: { id },
+      include: { offrir: true },
+    });
+
+    if (!rapport) {
+      console.warn(`🚨 Rapport ${id} introuvable`);
+      return { error: "Le rapport n'existe pas." };
+    }
+
+    if (rapport.offrir.length > 0) {
+      await prisma.offrir.deleteMany({
+        where: { idrapport: id },
+      });
+      console.log(`✅ Offres liées au rapport ${id} supprimées`);
+    }
+
+    await prisma.rapport.delete({
+      where: { id },
+    });
+
+    console.log(`✅ Rapport ${id} supprimé avec succès`);
+    return { success: true };
+  } catch (e: any) {
+    console.error("🚨 Erreur lors de la suppression :", e);
+    return { error: `Échec de la suppression : ${e.message}` };
   }
 };

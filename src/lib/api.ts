@@ -66,3 +66,35 @@ export const SearchMedecinsBySpeciality = async (speciality: string) => {
     return [];
   }
 };
+export const fetchUser = async () => {
+  try {
+    const response = await fetch("/api/auth/user");
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Error fetching user:", error);
+    return [];
+  }
+};
+
+export const fetchRapportsByVisiteur = async (idVisiteur: string) => {
+  try {
+    const response = await fetch(`/api/rapports/visiteur/${idVisiteur}`);
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Error fetching rapports by visiteur:", error);
+    return [];
+  }
+};
+
+export const fetchRapportByID = async (id: number) => {
+  try {
+    const response = await fetch(`/api/rapport/${id}`);
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Error fetching rapport:", error);
+    return [];
+  }
+};

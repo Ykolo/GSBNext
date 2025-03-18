@@ -6,6 +6,7 @@ import { generateToken } from "../jwt";
 import prisma from "../prisma";
 
 interface CustomeJWTPayload {
+  id: string;
   login: string;
   password: string;
 }
@@ -25,10 +26,10 @@ export const login = async (login: string, password: string) => {
       where: { login },
     });
     const cleanedPassword = visiteur && visiteur.mdp?.replace(/ /g, "");
-    const token = generateToken({ login, password });
     if (!visiteur) {
       return { success: false, error: "Utilisateur inexistant" };
     }
+    const token = generateToken({ id: visiteur.id, login, password });
     if (cleanedPassword != password) {
       return { success: false, error: "Mot de passe incorrect" };
     }

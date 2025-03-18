@@ -1,9 +1,10 @@
 "use client";
 
-import { getUser, login } from "@/lib/actions/auth.action";
+import { login, logout } from "@/lib/actions/auth.action";
+import { fetchUser } from "@/lib/api";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { redirect } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { useRouter } from "next/navigation";
 import { FormProvider, useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
@@ -26,24 +27,12 @@ const LoginFormSchema = z.object({
 type LoginFormType = z.infer<typeof LoginFormSchema>;
 
 const FormConnexion = () => {
-  const [message, setMessage] = useState("");
-  const [user, setUser] = useState<any>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const router = useRouter();
 
-  useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const userData = await getUser();
-        setUser(userData);
-      } catch (error) {
-        console.error("Error fetching user:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchUser();
-  }, []);
+  const { data: user, isLoading } = useQuery({
+    queryKey: ["user"],
+    queryFn: fetchUser,
+  });
 
   const form = useForm<LoginFormType>({
     resolver: zodResolver(LoginFormSchema),
@@ -52,16 +41,25 @@ const FormConnexion = () => {
       password: "",
     },
   });
-
   if (isLoading) {
     return <div>Chargement...</div>;
   }
 
-  if (user && typeof user === "object" && user.login) {
+  if (user && typeof user === "object" && user.decoded && user.decoded.login) {
     return (
-      <div>
+      <div className="flex flex-col gap-8">
         <p>Vous êtes déjà connecté </p>
-        <Button onClick={() => redirect("/dashboard")}>Dashboard</Button>
+        <div className="flex gap-4">
+          <Button onClick={() => router.push("/dashboard")}>Dashboard</Button>
+          <Button
+            onClick={() => {
+              logout();
+              router.push("/");
+            }}
+          >
+            Déconnexion
+          </Button>
+        </div>
       </div>
     );
   }
@@ -73,12 +71,11 @@ const FormConnexion = () => {
         toast.error(response?.error || "Identifiants incorrects.");
         return;
       }
-      setMessage("Connexion réussie");
-      toast.success(message, { duration: 2000 });
+      toast.success("Connexion réussie", { duration: 2000 });
+      router.push("/dashboard");
     } catch (error) {
-      setMessage("Échec de la connexion");
       console.error(error);
-      toast.error(message, { duration: 2000 });
+      toast.error("Échec de la connexion", { duration: 2000 });
     }
   };
 

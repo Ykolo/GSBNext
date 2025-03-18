@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/card";
 import { getUser, logout } from "@/lib/actions/auth.action";
 import { redirect } from "next/navigation";
+import TableRapports from "../../components/TableRapports";
 
 const Dashboard = async () => {
   const user = await getUser();
@@ -23,12 +24,15 @@ const Dashboard = async () => {
     <div className="flex h-screen flex-col">
       <Navbar />
       <div className="flex flex-1 flex-col justify-center">
-        <Card className="mx-60">
+        <Card className="mx-10">
           <CardHeader>
             <CardTitle>Dashboard</CardTitle>
           </CardHeader>
           <CardContent>
-            <p>Welcome {user.decoded.login || ""}</p>
+            <h1 className="mb-8 ml-4 text-2xl font-bold">
+              Salut {user.decoded.login || ""}
+            </h1>
+            <TableRapports userID={user.decoded.id.toString()} />
           </CardContent>
           <CardFooter>
             <form
@@ -37,7 +41,6 @@ const Dashboard = async () => {
                 await logout();
                 redirect("/");
               }}
-              method="POST"
             >
               <Button type="submit">Déconnexion</Button>
             </form>

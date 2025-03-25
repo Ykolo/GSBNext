@@ -29,7 +29,7 @@ const Dashboard = async () => {
             <CardTitle>Dashboard</CardTitle>
           </CardHeader>
           <CardContent>
-            <h1 className="mb-8 ml-4 text-2xl font-bold">
+            <h1 className="mb-8 ml-2 text-2xl font-bold">
               Salut {user.decoded.login || ""}
             </h1>
             <TableRapports userID={user.decoded.id.toString()} />

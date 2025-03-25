@@ -114,3 +114,5 @@ Le système semble prévoir un stockage sécurisé des mots de passe (VARCHAR(10
 4. Créer la base de données (`correspondant à la base données en postgresql dans le fichier .env`)
 5. Exécuter les scripts SQL (`gsbrapportspsql.sql`)
 6. Lancer le serveur de développement (`pnpm dev`)
+
+## Si il y a des problèmes n'hésitez pas à me contacter

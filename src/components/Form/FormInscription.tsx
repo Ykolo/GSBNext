@@ -1,12 +1,16 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useQuery } from "@tanstack/react-query";
+import router from "next/router";
 import { useEffect, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
 import { labels } from "../../data/label";
+import { logout } from "../../lib/actions/auth.action";
 import { createVisiteur } from "../../lib/actions/visiteurAction";
+import { fetchUser } from "../../lib/api";
 import { Button } from "../ui/button";
 import {
   FormControl,
@@ -44,6 +48,11 @@ type SignUpFormType = z.infer<typeof SignUpFormSchema>;
 
 const FormInscription = () => {
   const [message, setMessage] = useState("");
+
+  const { data: user } = useQuery({
+    queryKey: ["user"],
+    queryFn: fetchUser,
+  });
 
   const form = useForm<SignUpFormType>({
     resolver: zodResolver(SignUpFormSchema),
@@ -91,6 +100,24 @@ const FormInscription = () => {
       toast.error(message, { duration: 2000 });
     }
   };
+  if (user && typeof user === "object" && user.decoded && user.decoded.login) {
+    return (
+      <div className="flex flex-col gap-8">
+        <p>Vous êtes déjà connecté </p>
+        <div className="flex gap-4">
+          <Button onClick={() => router.push("/dashboard")}>Dashboard</Button>
+          <Button
+            onClick={() => {
+              logout();
+              router.push("/");
+            }}
+          >
+            Déconnexion
+          </Button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <FormProvider {...form}>

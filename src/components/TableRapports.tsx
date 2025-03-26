@@ -22,12 +22,21 @@ import { toast } from "sonner";
 import { deleteRapport } from "../lib/actions/rapportActions";
 import { fetchRapportsByVisiteur } from "../lib/api";
 import { RapportWithMedecinType } from "../types/rapport";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationNext,
+  PaginationPrevious,
+} from "./ui/pagination";
 
 interface TableRapportsProps {
   userID: string;
 }
 
 const TableRapports = ({ userID }: TableRapportsProps) => {
+  const PAGE_SIZE = 10;
+  const [page, setPage] = useState(1);
   const [open, setOpen] = useState(false);
   const [selectedId, setSelectedId] = useState<number | null>(null);
   const router = useRouter();
@@ -40,6 +49,11 @@ const TableRapports = ({ userID }: TableRapportsProps) => {
     queryKey: ["rapports"],
     queryFn: () => fetchRapportsByVisiteur(userID),
   });
+
+  const paginatedRapports = rapports
+    ? rapports.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE)
+    : [];
+  const pageCount = rapports ? Math.ceil(rapports.length / PAGE_SIZE) : 1;
 
   const formatDate = (date: Date | null | undefined): string => {
     if (!date) return "N/A";
@@ -97,8 +111,8 @@ const TableRapports = ({ userID }: TableRapportsProps) => {
             </TableRow>
           )}
 
-          {rapports && rapports.length > 0 ? (
-            rapports.map((rapport: RapportWithMedecinType) => (
+          {paginatedRapports && paginatedRapports.length > 0 ? (
+            paginatedRapports.map((rapport: RapportWithMedecinType) => (
               <TableRow key={rapport.id}>
                 <TableCell className="break-words whitespace-normal">
                   {rapport.medecin
@@ -142,7 +156,35 @@ const TableRapports = ({ userID }: TableRapportsProps) => {
           )}
         </TableBody>
       </Table>
-
+      {rapports && rapports.length > PAGE_SIZE && (
+        <Pagination>
+          <PaginationContent>
+            <PaginationItem>
+              <PaginationPrevious
+                onClick={() => setPage(prev => Math.max(prev - 1, 1))}
+                className={
+                  page === 1
+                    ? "pointer-events-none opacity-50"
+                    : "cursor-default"
+                }
+              />
+            </PaginationItem>
+            <PaginationItem className="cursor-default px-4 text-sm">
+              Page {page} sur {pageCount}
+            </PaginationItem>
+            <PaginationItem>
+              <PaginationNext
+                onClick={() => setPage(prev => Math.min(prev + 1, pageCount))}
+                className={
+                  page === pageCount
+                    ? "pointer-events-none opacity-50"
+                    : "cursor-default"
+                }
+              />
+            </PaginationItem>
+          </PaginationContent>
+        </Pagination>
+      )}
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent>
           <DialogHeader>

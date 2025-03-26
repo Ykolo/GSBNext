@@ -1,7 +1,15 @@
+"use client";
+import { useQuery } from "@tanstack/react-query";
+import { CircleUserRound } from "lucide-react";
 import Link from "next/link";
+import { fetchUser } from "../lib/api";
 import { Button } from "./ui/button";
 
 const Navbar = () => {
+  const { data: user, isLoading } = useQuery({
+    queryKey: ["user"],
+    queryFn: fetchUser,
+  });
   return (
     <div className="m-8 p-4 text-xl font-bold">
       <ul className="flex items-center justify-between">
@@ -24,21 +32,33 @@ const Navbar = () => {
             </Link>
           </li>
         </div>
-        <div className="flex items-center gap-5">
-          {/* <ModeToogle /> */}
-          <li>
-            <Link href={"/connexion"}>
-              <Button variant={"outline"} className="py-6">
-                Connexion
-              </Button>
-            </Link>
-          </li>
-          <li>
-            <Link href={"/inscription"}>
-              <Button className="py-6">Inscription</Button>
-            </Link>
-          </li>
-        </div>
+        {user &&
+        typeof user === "object" &&
+        user.decoded &&
+        user.decoded.login ? (
+          <div className="flex items-center gap-5">
+            <li>
+              <Link href={"/dashboard"}>
+                <CircleUserRound size={32} />
+              </Link>
+            </li>
+          </div>
+        ) : (
+          <div className="flex items-center gap-5">
+            <li>
+              <Link href={"/connexion"}>
+                <Button variant={"outline"} className="py-6">
+                  Connexion
+                </Button>
+              </Link>
+            </li>
+            <li>
+              <Link href={"/inscription"}>
+                <Button className="py-6">Inscription</Button>
+              </Link>
+            </li>
+          </div>
+        )}
       </ul>
     </div>
   );

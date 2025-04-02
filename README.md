@@ -115,4 +115,6 @@ Le système semble prévoir un stockage sécurisé des mots de passe (VARCHAR(10
 5. Exécuter les scripts SQL (`gsbrapportspsql.sql`)
 6. Lancer le serveur de développement (`pnpm dev`)
 
+## Pour lancer les tests unitaires veuillez taper dans le terminal `pnpm test`
+
 ## Si il y a des problèmes n'hésitez pas à me contacter
